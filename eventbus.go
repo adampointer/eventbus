@@ -42,6 +42,7 @@ func (b *EventBus) Unsubscribe(topic Topic, c chan Event) error {
 		if sub.Len() == 0 {
 			b.delete(topic)
 		}
+		close(c)
 		return nil
 	}
 	return fmt.Errorf("unknown event type '%s'", topic)
