@@ -8,6 +8,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type testEvent struct {
+	t Topic
+}
+
+func newTestEvent() *testEvent {
+	return &testEvent{}
+}
+
+func (e *testEvent) Type() EventType {
+	return "test"
+}
+
+func (e *testEvent) Topic() Topic {
+	return e.t
+}
+
+func (e *testEvent) SetTopic(t Topic) {
+	e.t = t
+}
+
 func TestEventBus_Subscribe(t *testing.T) {
 	bus := NewEventBus()
 	var ev1 Topic = "foo"
@@ -39,7 +59,7 @@ func TestEventBus_Unsubscribe(t *testing.T) {
 func TestEventBus_Publish(t *testing.T) {
 	bus := NewEventBus()
 	var ev1 Topic = "foo"
-	e := struct{ foo string }{"bar"}
+	e := newTestEvent()
 	c := bus.Subscribe(ev1)
 
 	var wg sync.WaitGroup
@@ -61,7 +81,7 @@ func TestEventBus_Publish(t *testing.T) {
 func TestEventBus_Concurrency(t *testing.T) {
 	bus := NewEventBus()
 	var ev1 Topic = "foo"
-	e := struct{ foo string }{"bar"}
+	e := newTestEvent()
 	n := 10
 	var wg sync.WaitGroup
 	wg.Add(n)
@@ -94,7 +114,7 @@ func TestEventBus_Concurrency(t *testing.T) {
 func TestEventBus_ClosedChannel(t *testing.T) {
 	bus := NewEventBus()
 	var ev1 Topic = "foo"
-	e := struct{ foo string }{"bar"}
+	e := newTestEvent()
 	n := 10
 	var wg sync.WaitGroup
 	wg.Add(n)

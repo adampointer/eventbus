@@ -1,4 +1,4 @@
-module eventbus
+module github.com/adampointer/eventbus
 
 go 1.14
 

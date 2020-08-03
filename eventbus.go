@@ -7,9 +7,19 @@ import (
 	"sync"
 )
 
-type Event interface{}
+type Event interface {
+	Type() EventType
+	Topic() Topic
+	SetTopic(t Topic)
+}
 
 type Topic string
+
+type EventType string
+
+func (e EventType) String() string {
+	return string(e)
+}
 
 type EventBus struct {
 	lock   sync.RWMutex
@@ -50,6 +60,7 @@ func (b *EventBus) Unsubscribe(topic Topic, c chan Event) error {
 
 func (b *EventBus) Publish(topic Topic, e Event) {
 	sub := b.get(topic)
+	e.SetTopic(topic)
 	if sub != nil {
 		sub.Publish(e)
 	}
